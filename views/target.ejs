@@ -1,0 +1,19 @@
+<div class="target-box">
+    <div class="target">
+        <h2>Target</h2>
+        <img src="asset/<%= data.challengeId %>.png" alt="Target">
+    </div>
+
+    <div class="colors">
+        <h2>Colors</h2>
+        <div class="colors-box">
+            <% data.colors.forEach((each)=>{ %>
+                <div class="each-color">
+                    <span class="color" style="background-color: <%= each %>;"></span>
+                    <span class="text"><%=each%></span>
+                </div>
+            <% }) %>
+        </div>
+    </div>
+</div>
+<script src="js/copyColor.js" defer></script>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/play.css">
+    <link rel="stylesheet" href="css/editor.css">
+    <link rel="stylesheet" href="css/output.css">
+    <link rel="stylesheet" href="css/target.css">
+    <title>Editor</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ext-language_tools.js"></script>
+</head>
+<body>
+    <main>
+        <%- include("editor",data) %>
+        <%- include("output",data) %>
+        <%- include("target",data) %>
+    </main>
+    <footer>
+
+    </footer>
+    
+
+</body>
+</html>

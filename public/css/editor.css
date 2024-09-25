@@ -1,0 +1,13 @@
+.pre-editor{
+    height: 35vh;
+    width: auto;
+}
+.each-editor-outer{
+    background: #444444;
+    padding: 6px;
+    margin-bottom: 1rem;
+}
+.each-editor-outer h3{
+    margin-bottom: 0.5rem;
+    color: #e0e0e0;
+}

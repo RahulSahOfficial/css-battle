@@ -1,0 +1,63 @@
+.target-box img{
+    width: 400px;
+    aspect-ratio: 4 / 3;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+.colors-box{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1rem;
+}
+.each-color {
+    font-family: "Open Sans", system-ui;
+    position: relative;
+    display: inline-flex;
+    gap: 0.5rem;
+    align-items: center;
+    background: #646464;
+    border-radius: 20px;
+    padding: 0.5rem;
+    cursor: pointer;
+    user-select: none;
+    transition: 0.2s ease-in;
+}
+.each-color::after {
+    content: "COPIED!";
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #e7e7e7;
+    color: #232323;
+    padding: 5px;
+    border-radius: 3px;
+    font-size: 14px;
+    font-weight: 500;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  
+.each-color.copied::after {
+    opacity: 1;
+}
+.each-color:hover{
+    transform: scale(1.03);
+}
+.each-color:active{
+    transform: scale(0.97);
+    
+}
+.each-color span.color{
+    width: 1.5rem;
+    height: 1.5rem;
+    display: inline-flex;
+    background: red;
+    border-radius: 100%;
+}
+.each-color span.text{
+    margin: 0 6px;
+}

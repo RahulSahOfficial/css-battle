@@ -1,0 +1,6 @@
+.output-box iframe{
+    background: #ffffff;
+    width: 400px;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+}
