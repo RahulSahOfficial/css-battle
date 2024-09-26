@@ -24,9 +24,16 @@ cssEditor.setOptions({
     showPrintMargin:false, 
     fontFamily: 'monospace',
 });
-cssEditor.setValue(`div{
-    width: 100px;
-    height: 100px;
-    background: red;   
+cssEditor.setValue(`body{
+    background: #5D3A3A;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+div{
+    width: 200px;
+    height: 40px;
+    background: #B5E0BA;
 }`);
 cssEditor.clearSelection();
