@@ -6,7 +6,7 @@ const sliderSpan=document.getElementById("slider-span");
 
 compareBtm.addEventListener("input",()=>{
     if(compareBtm.checked)
-        outputImageTarget.style.opacity=0.7;
+        outputImageTarget.style.opacity=0.5;
     else
         outputImageTarget.style.opacity=0;
 })

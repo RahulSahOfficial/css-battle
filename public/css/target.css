@@ -1,4 +1,4 @@
-.target-box img{
+.target-box .target-canvas{
     width: 400px;
     aspect-ratio: 4 / 3;
     user-select: none;

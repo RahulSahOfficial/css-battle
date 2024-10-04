@@ -1,7 +1,8 @@
 <div class="target-box">
     <div class="target">
         <h2>Target</h2>
-        <img src="asset/<%= data.challengeId %>.png" alt="Target">
+        <canvas class="target-canvas" id="targetCanvas"></canvas>
+        <!-- <img src="asset/<%= data.challengeId %>.png" alt="Target"> -->
     </div>
 
     <div class="colors">
@@ -16,4 +17,8 @@
         </div>
     </div>
 </div>
+<script>
+    const challengeId='<%= data.challengeId %>';
+</script>
+<script src="js/target.js" type="module" defer></script>
 <script src="js/copyColor.js" defer></script>

@@ -25,8 +25,7 @@ cssEditor.setOptions({
     fontFamily: 'monospace',
 });
 cssEditor.setValue(`body{
-    background: #5D3A3A;
-    margin: 0;
+    background: red;
     display: flex;
     align-items: center;
     justify-content: center;
