@@ -3,8 +3,7 @@ main{
     gap:1rem;
     grid-template-columns: auto 400px 400px;
     height: 100vh;
-    background: #000000;
-    padding: 1rem;
+    padding: 2rem 1rem;
     overflow: hidden;
 }
 h2{

@@ -1,0 +1,39 @@
+h1{
+    font-size: 2rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+}
+.c-box{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: flex-start;
+}
+.each-c{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+    border: 1px solid grey;
+    text-align: center;
+    backdrop-filter: blur(1px);
+}
+.each-c img{
+    width: 300px;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+}
+.each-c h3{
+    font-size: 1.2rem;
+}
+.each-c button{
+    cursor: pointer;
+    padding: 0.5rem 3rem;
+    background: #03A9F4;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 2px;
+    border-radius: 3px;
+    border: none;
+}

@@ -7,15 +7,16 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/reset.css">
-    <link rel="stylesheet" href="/css/404.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/message.css">
     <title>Not Found</title>
 </head>
 <body>
     <main>
         <div>
-            <h1>❌ Challenge not found!</h1>
-            <p>The challenge ID you entered does not exist. Please check the challenge ID or explore other challenges.</p>
-            <a href="/"><button>All Challenges</button></a>
+            <h1><%= data.heading %></h1>
+            <p><%= data.description %></p>
+            <a href="/challenges"><button>All Challenges</button></a>
         </div>
     </main>
     <footer>
