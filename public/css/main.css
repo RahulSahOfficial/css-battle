@@ -7,8 +7,8 @@ main{
 }
 p.error{
     color: #ff8178;
-    text-transform: uppercase;
     letter-spacing: 1px;
     word-spacing: 2px;
     font-size: 1.1rem;
+    margin-bottom: 1rem;
 }

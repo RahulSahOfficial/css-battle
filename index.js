@@ -3,11 +3,23 @@ import env from "dotenv";
 import pg from "pg";
 import ejs, { render } from "ejs";
 import bodyParser from "body-parser";
+import session  from "express-session";
+
+
 
 env.config();
 const app = express();
 const port = process.env.PORT||3000;
 
+app.use(session({
+  secret: process.env.SESSION_SECRET || "sdnasdk568976AT", 
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    secure: false, 
+    maxAge: 1000 * 60 * 60 * 24 * 7 
+  }
+}));
 
 const db = new pg.Client({
   user: process.env.PG_USER,
@@ -30,7 +42,60 @@ app.get("/",(req,res)=>{
     res.render("home.ejs");
 })
 
-app.get("/challenges",async (req,res)=>{
+
+app.get("/login",(req,res)=>{
+  res.render("login.ejs");
+})
+
+app.post("/login",async (req,res)=>{
+  const user = req.body; 
+  if(user.email && user.password){
+    try{
+      const respose = await db.query("SELECT id,name FROM users WHERE email=$1 AND password=$2",[user.email,user.password]);
+      if(respose.rows.length==1){
+        req.session.user = respose.rows[0];
+        res.redirect("/challenges");
+      }
+      else{
+        res.render("login.ejs",{
+          formData:req.body,
+          message:"ID or password is incorrect!"
+        });
+      }
+    }
+    catch(err){
+      res.render("login.ejs",{
+        formData:req.body,
+        message:"Something Went Wrong!"
+      });
+    }
+  }
+  else{
+    res.render("login.ejs",{
+      formData:req.body,
+      message:"ID or password is filled properly!"
+    });
+  }
+})
+
+function isLoggedIn(req, res, next) {
+  if (req.session.user) {
+    // console.log(req.session.user)
+    next();
+  } else {
+    res.redirect("/login");
+  }
+}
+
+
+app.get('/logout', (req, res) => {
+  req.session.destroy();
+  res.redirect("/login");
+});
+
+
+
+app.get("/challenges",isLoggedIn,async (req,res)=>{
   try{
     const respose = await db.query("SELECT id,name,live FROM challenge WHERE show=true");
     res.render("challenges.ejs",{
@@ -44,7 +109,9 @@ app.get("/challenges",async (req,res)=>{
   }
   
 })
-app.get("/play/:cid",async (req,res)=>{
+
+
+app.get("/play/:cid",isLoggedIn,async (req,res)=>{
   const challengeId=req.params.cid;
   try{
     const respose = await db.query("SELECT * FROM challenge WHERE id=$1",[challengeId]);

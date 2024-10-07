@@ -1,0 +1,43 @@
+main{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Open Sans", system-ui;
+}
+main>div{
+    padding: 2rem 1rem;
+    border: 1px solid grey;
+    backdrop-filter: blur(1px);
+    width: 25rem;
+    border-radius: 5px;
+}
+h1{
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-size: 1.3rem;
+}
+form{
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+.each-input{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+.each-input label{
+    font-size: 1.1rem;
+}
+.each-input input{
+    padding: 0.5rem;
+    color: black;
+}
+button{
+    padding: 0.5rem;
+    background: #03A9F4;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    border: none;
+}
