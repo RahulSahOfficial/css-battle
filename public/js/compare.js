@@ -1,6 +1,10 @@
 const outputCanvas=document.getElementById("outputCanvas");
 const targetCanvas=document.getElementById("targetCanvas");
+const submitBtn=document.getElementById("submit-btn");
 const targetCtx = targetCanvas.getContext("2d");
+
+
+submitBtn.addEventListener("click",compareTargetOutput);
 
 function compareTargetOutput () {
     let targetData=targetCtx.getImageData(0,0,400,300);
@@ -18,7 +22,6 @@ function compareTargetOutput () {
                 matchCnt++;
         }
         matchPercent=parseFloat((matchCnt*100/(400*300)).toFixed(2));
-        console.log(matchCnt);
-        console.log(matchPercent);
+        alert(matchPercent+'%');
     })
 }

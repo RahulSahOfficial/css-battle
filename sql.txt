@@ -1,0 +1,7 @@
+CREATE TABLE challenge(
+	id VARCHAR(7) primary key,
+	name VARCHAR(50) not null,
+	colors TEXT NOT NULL
+);
+insert into challenge (id,name,colors) 
+values ('76tgaTH','Contest 888','#5D3A3A,#B5E0BA');

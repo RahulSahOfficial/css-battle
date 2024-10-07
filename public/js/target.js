@@ -3,7 +3,7 @@ const targetCtx = targetCanvas.getContext("2d");
 targetCanvas.height=300;
 targetCanvas.width=400;
 const targetImg = new Image();
-targetImg.src=`asset/${challengeId}.png`;
+targetImg.src=`/asset/${challengeId}.png`;
 
 targetImg.addEventListener("load", () => {
     targetCtx.drawImage(targetImg, 0, 0);

@@ -54,3 +54,18 @@
     transform: translate(-50%, -50%);
     font-family: "Open Sans", system-ui;
 }
+#submit-btn{
+    padding: 0.8rem 3rem;
+    background: #03A9F4;
+    font-size: 1rem;
+    text-transform: uppercase;
+    border-radius: 10px;
+    transition: 0.2s ease transform;
+    cursor: pointer;
+}
+#submit-btn:hover{
+    transform: scale(1.05);
+}
+#submit-btn:active{
+    transform: scale(0.95);
+}
