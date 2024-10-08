@@ -5,8 +5,6 @@ import ejs, { render } from "ejs";
 import bodyParser from "body-parser";
 import session  from "express-session";
 
-
-
 env.config();
 const app = express();
 const port = process.env.PORT||3000;
@@ -44,7 +42,12 @@ app.get("/",(req,res)=>{
 
 
 app.get("/login",(req,res)=>{
-  res.render("login.ejs");
+  res.render("login.ejs",{
+    formData:{
+      email:"205123080@nitt.edu",
+      password:"johndoe"
+    }
+  });
 })
 
 app.post("/login",async (req,res)=>{
@@ -95,7 +98,7 @@ app.get('/logout', (req, res) => {
 
 
 
-app.get("/challenges",isLoggedIn,async (req,res)=>{
+app.get("/challenges",async (req,res)=>{
   try{
     const respose = await db.query("SELECT id,name,live FROM challenge WHERE show=true");
     res.render("challenges.ejs",{
@@ -111,7 +114,7 @@ app.get("/challenges",isLoggedIn,async (req,res)=>{
 })
 
 
-app.get("/play/:cid",isLoggedIn,async (req,res)=>{
+app.get("/play/:cid",async (req,res)=>{
   const challengeId=req.params.cid;
   try{
     const respose = await db.query("SELECT * FROM challenge WHERE id=$1",[challengeId]);

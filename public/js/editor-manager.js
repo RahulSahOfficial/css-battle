@@ -1,4 +1,19 @@
 ace.require("ace/ext/language_tools");
+const htmlBoilerplateCode="<div></div>";
+const cssBoilerplateCode=`div{
+    width: 100px;
+    height: 100px;
+    background: blue;
+}`;
+
+let localCodes=JSON.parse(localStorage.getItem("localCodes"))||{};
+let challengeCodes=localCodes.hasOwnProperty(challengeId) ? localCodes[challengeId] : {
+    html:htmlBoilerplateCode,
+    css:cssBoilerplateCode
+};
+localCodes[challengeId]=challengeCodes;
+localStorage.setItem("localCodes",JSON.stringify(localCodes));
+
 var htmlEditor = ace.edit("html-editor");
 htmlEditor.session.setMode("ace/mode/html");
 htmlEditor.setTheme("ace/theme/monokai");
@@ -10,7 +25,7 @@ htmlEditor.setOptions({
     showPrintMargin:false, 
     fontFamily: 'monospace',
 });
-htmlEditor.setValue("<div></div>");
+htmlEditor.setValue(challengeCodes.html);
 htmlEditor.clearSelection(); 
 
 var cssEditor = ace.edit("css-editor");
@@ -24,15 +39,5 @@ cssEditor.setOptions({
     showPrintMargin:false, 
     fontFamily: 'monospace',
 });
-cssEditor.setValue(`body{
-    background: red;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-div{
-    width: 200px;
-    height: 40px;
-    background: #B5E0BA;
-}`);
+cssEditor.setValue(challengeCodes.css);
 cssEditor.clearSelection();

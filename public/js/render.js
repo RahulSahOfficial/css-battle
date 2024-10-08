@@ -8,6 +8,13 @@ const defaultCss=`body{
 const render = () =>{
     const htmlCode=htmlEditor.getValue();
     const cssCode=cssEditor.getValue();
+    const challengeCodes={
+        html:htmlCode,
+        css:cssCode
+    };
+    let localCodes=JSON.parse(localStorage.getItem("localCodes"));
+    localCodes[challengeId]=challengeCodes;
+    localStorage.setItem("localCodes",JSON.stringify(localCodes));
     outputFrame.contentDocument.body.innerHTML=htmlCode+"<style>"+defaultCss+cssCode+"</style>";
 }
 
