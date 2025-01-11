@@ -9,6 +9,7 @@ env.config();
 const app = express();
 const port = process.env.PORT||3000;
 
+// Login 
 app.use(session({
   secret: process.env.SESSION_SECRET || "sdnasdk568976AT", 
   resave: false,
@@ -19,6 +20,7 @@ app.use(session({
   }
 }));
 
+// DB Connection 
 const db = new pg.Client({
   user: process.env.PG_USER,
   host: process.env.PG_HOST,
@@ -28,7 +30,7 @@ const db = new pg.Client({
 });
 db.connect();
 
-
+// Middlewares 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.set("view-engine","ejs");
@@ -36,11 +38,13 @@ app.set("view-engine","ejs");
 
 app.use(bodyParser.urlencoded({extended:true}));
 
+
+// Home render 
 app.get("/",(req,res)=>{
     res.render("home.ejs");
 })
 
-
+// Login Get 
 app.get("/login",(req,res)=>{
   res.render("login.ejs",{
     formData:{
@@ -50,6 +54,7 @@ app.get("/login",(req,res)=>{
   });
 })
 
+// Login Post
 app.post("/login",async (req,res)=>{
   const user = req.body; 
   if(user.email && user.password){
@@ -90,14 +95,14 @@ function isLoggedIn(req, res, next) {
   }
 }
 
-
+// Logout Get  
 app.get('/logout', (req, res) => {
   req.session.destroy();
   res.redirect("/login");
 });
 
 
-
+// Challenges Get 
 app.get("/challenges",async (req,res)=>{
   try{
     const respose = await db.query("SELECT id,name,live FROM challenge WHERE show=true");
@@ -113,7 +118,7 @@ app.get("/challenges",async (req,res)=>{
   
 })
 
-
+// Challenges Specific Get
 app.get("/play/:cid",async (req,res)=>{
   const challengeId=req.params.cid;
   try{
@@ -154,6 +159,84 @@ app.get("/play/:cid",async (req,res)=>{
   }
 })
 
+
+//AdminPanel
+app.get('/adminpanel', (req, res) => {
+  res.render("adminpanel/home.ejs");
+});
+
+app.get('/adminpanel/problems',async (req, res) => {
+  try{
+    const respose = await db.query("SELECT id,name FROM problems");
+    res.render("adminpanel/problems.ejs",{
+      data:respose.rows
+    });
+  }
+  catch(err){
+    res.render("message.ejs",{
+      data:{
+        heading:"❌ Something went wrong!",
+        description:"Facing error"
+      }
+    });
+  }
+});
+
+app.get('/adminpanel/challenges',async (req, res) => {
+  try{
+    const respose = await db.query("select c.name,p.id problemId,p.name problemName,starttime,duration from challenges c inner join problems p on c.questionid=p.id;");
+    res.render("adminpanel/challenges.ejs",{
+      data:respose.rows
+    });
+  }
+  catch(err){
+    res.render("message.ejs",{
+      data:{
+        heading:"❌ Something went wrong!",
+        description:err.detail
+      }
+    });
+  }
+});
+
+app.get('/adminpanel/create-challenge',async (req, res) => {
+
+  try{
+    const respose = await db.query("SELECT id,name FROM problems");
+    res.render("adminpanel/create-challenge.ejs",{
+      data:respose.rows
+    });
+  }
+  catch(err){
+    res.render("message.ejs",{
+      data:{
+        heading:"❌ Cannot fetch problems!",
+      }
+    });
+  }
+});
+
+app.post('/adminpanel/create-challenge',async (req, res) => {
+  const data=req.body;
+  try{
+    await db.query("insert into challenges(name,questionId,starttime,duration) values ($1,$2,$3,$4);",[encodeURI(data.name),data.problem,data.starttime,data.duration]);
+    res.redirect("/adminpanel/all-challenge");
+  }
+  catch(error){
+    res.render("message.ejs",{
+      data:{
+        heading:"❌ Something went wrong!",
+        description:error.detail,
+        button:{
+          link: "/adminpanel/create-challenge", 
+          text: "Try Again"
+        }
+      }
+    });
+  }
+});
+
+// App Listen 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });

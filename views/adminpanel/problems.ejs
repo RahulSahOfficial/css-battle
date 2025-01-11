@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/adminpanel/adminpanel.css">
+    <link rel="stylesheet" href="/css/adminpanel/problems.css">
+    <title>Problems | AdminPanel</title>
+</head>
+<body>
+    <main>
+        <% if(data.length==0){ %>
+            <p class="error">🚫 No problems Found!</p>
+        <% }else{%>
+        <% data.forEach(function(each){ %>
+            <div class="each-c">
+                <img src="/asset/problems/<%=each.id%>.png" alt=<%=each.name%>>
+                <h3><%=each.name%></h3>
+                <!-- <a href="/play/<%=each.id%>"><button>Start</button></a> -->
+            </div>
+        <% });} %>
+    </main>
+</body>
+</html>

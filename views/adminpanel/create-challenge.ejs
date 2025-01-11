@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/adminpanel/adminpanel.css">
+    <!-- <link rel="stylesheet" href="/css/adminpanel/problems.css"> -->
+    <title>Create Challenge | AdminPanel</title>
+</head>
+<body>
+    <main>
+        <h1>Create Challenge</h1>
+        <form action="/adminpanel/create-challenge" method="post">
+            <div class="each-input">
+                <label for="problem">Select problem from List</label>
+                <select name="problem" id="problem" required>
+                    <% data.forEach(function(each){ %>
+                        <option value="<%= each.id %>"><%= each.name %></option>
+                    <% }) %>
+                </select>
+                
+                <img src="../asset/problems/<%= (data.length)?data[0].id+'.png':'hidden.gif' %>" id="question-image" alt="Problem Preview">
+            </div>
+            
+            <div class="each-input">
+                <label for="name">Enter Contest Name (Unique)</label>
+                <input type="text" name="name" id="name" required>
+            </div>
+            <div class="each-input">
+                <label for="starttime">Enter Contest start time</label>
+                <input type="datetime-local" name="starttime" id="starttime" required>
+            </div>
+            <div class="each-input">
+                <label for="duration">Enter Contest duration (in minutes)</label>
+                <input type="number" name="duration" id="duration" required>
+            </div>
+            <button type="submit">Submit</button>
+        </form>
+    </main>
+    <script src="../js/create-challenge.js"></script>
+</body>
+</html>

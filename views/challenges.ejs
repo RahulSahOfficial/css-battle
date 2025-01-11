@@ -21,7 +21,7 @@
             <% }else{%>
             <% data.forEach(function(each){ %>
                 <div class="each-c">
-                    <img src="/asset/<%=(each.live)?each.id+".png":"hidden.gif";%>" alt="Hidden">
+                    <img src="/asset/<%=(each.live)?each.id+'.png':'hidden.gif';%>" alt="Hidden">
                     <h3><%=each.name%></h3>
                     <a href="/play/<%=each.id%>"><button>Start</button></a>
                 </div>

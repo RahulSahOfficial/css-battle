@@ -5,3 +5,25 @@ CREATE TABLE challenge(
 );
 insert into challenge (id,name,colors) 
 values ('76tgaTH','Contest 888','#5D3A3A,#B5E0BA');
+
+
+
+Problems
+CREATE TABLE problems(
+	id serial primary key,
+	name varchar(20) not null,
+	colors TEXT NOT NULL
+);
+insert into problems (name,colors) 
+values('simple','#5D3A3A,#B5E0BA');
+
+
+
+create table challenges(
+	name varchar(200) primary key,
+	questionId integer references problems(id),
+	startTime timestamp not null,
+	duration integer not null
+);
+insert into challenges(name,questionId,starttime,duration)
+values ('round1',1,'2025-01-19 08:00:25-07','20');
