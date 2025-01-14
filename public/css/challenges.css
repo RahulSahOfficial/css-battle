@@ -37,3 +37,8 @@ h1{
     border-radius: 3px;
     border: none;
 }
+.each-c button:disabled{
+    cursor: not-allowed;
+    background: #bbbbbb;
+    font-size: 0.7rem;
+}

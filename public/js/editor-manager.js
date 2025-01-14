@@ -41,3 +41,9 @@ cssEditor.setOptions({
 });
 cssEditor.setValue(challengeCodes.css);
 cssEditor.clearSelection();
+
+document.addEventListener("keydown", function(e) {
+    if (e.key === 's' && (navigator.userAgent.includes('Mac') ? e.metaKey : e.ctrlKey)) {
+      e.preventDefault();
+    }
+}, false);

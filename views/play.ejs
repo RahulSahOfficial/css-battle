@@ -15,11 +15,22 @@
     <link rel="stylesheet" href="/css/output.css">
     <link rel="stylesheet" href="/css/target.css">
     <title>Challenge Editor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ext-language_tools.js"></script>
 </head>
 <body>
+    <div class="top-bar">
+        <h1><%= decodeURI(data.name) %></h1>
+        <div>
+            <i class="fa-solid fa-hourglass-end fa-spin"></i>
+            <span id="timer-box">
+                99:99
+            </span>
+        </div>
+    </div>
     <main>
+        
         <%- include("editor",data) %>
         <%- include("output",data) %>
         <%- include("target",data) %>
@@ -29,5 +40,6 @@
     </footer>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="/js/compare.js" defer></script>
+    <script src="/js/timer.js" defer></script>
 </body>
 </html>

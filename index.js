@@ -103,9 +103,24 @@ app.get('/logout', (req, res) => {
 
 
 // Challenges Get 
+// app.get("/challenges",async (req,res)=>{
+//   try{
+//     const respose = await db.query("SELECT id,name,live FROM challenge WHERE show=true");
+//     res.render("challenges.ejs",{
+//       data:respose.rows
+//     });
+//   }
+//   catch(err){
+//     res.render("challenges.ejs",{
+//       data:[]
+//     });
+//   }
+  
+// })
+
 app.get("/challenges",async (req,res)=>{
   try{
-    const respose = await db.query("SELECT id,name,live FROM challenge WHERE show=true");
+    const respose = await db.query("select to_char(starttime,'DD MON YY HH:MI:SS AM') starttimeformat,challenges.name,questionid,starttime,duration,(starttime + duration * interval '1 minute') endtime from challenges inner join problems on problems.id=challenges.questionId WHERE starttime + duration * interval '1 minute' > NOW();");
     res.render("challenges.ejs",{
       data:respose.rows
     });
@@ -119,16 +134,60 @@ app.get("/challenges",async (req,res)=>{
 })
 
 // Challenges Specific Get
+// app.get("/play/:cid",async (req,res)=>{
+//   const challengeId=req.params.cid;
+//   try{
+//     const respose = await db.query("SELECT * FROM challenge WHERE id=$1",[challengeId]);
+//     if(respose.rows.length==1){
+//       const challenge=respose.rows[0];
+//       if(challenge.live){
+//         const data={
+//           challengeId:challenge.id,
+//           name:challenge.name,
+//           colors:challenge.colors.split(',')
+//         }
+//         res.render("play.ejs",{data});
+//       }
+//       else//if not live
+//         res.render("message.ejs",{
+//           data:{
+//             heading:"❌ Challenge is not started!",
+//             description:"The challenge you're trying to access hasn't started yet. Keep an eye on this space and sharpen your CSS skills in the meantime. Get ready to join the battle once it goes live!"
+//           }
+//         });
+//     }
+//     else//if challege not found
+//       res.render("message.ejs",{
+//         data:{
+//           heading:"❌ Challenge not found!",
+//           description:"The challenge ID you entered does not exist. Please check the challenge ID or explore other challenges."
+//         }
+//       });
+//   }
+//   catch(err){//if something went wrong
+//     res.render("message.ejs",{
+//       data:{
+//         heading:"❌ Challenge not found!",
+//         description:"The challenge ID you entered does not exist. Please check the challenge ID or explore other challenges."
+//       }
+//     });
+//   }
+// })
+
+
 app.get("/play/:cid",async (req,res)=>{
   const challengeId=req.params.cid;
+  const currDate=new Date();
   try{
-    const respose = await db.query("SELECT * FROM challenge WHERE id=$1",[challengeId]);
+    const respose = await db.query("select challenges.name name,problems.id id,problems.colors,starttime,duration,(starttime + duration * interval '1 minute') endtime from challenges inner join problems on challenges.questionid = problems.id WHERE challenges.name=$1;",[challengeId]);
     if(respose.rows.length==1){
       const challenge=respose.rows[0];
-      if(challenge.live){
+      if(challenge.starttime<= currDate && currDate <= challenge.endtime){
         const data={
           challengeId:challenge.id,
           name:challenge.name,
+          endTime:challenge.endtime,
+          
           colors:challenge.colors.split(',')
         }
         res.render("play.ejs",{data});
@@ -136,7 +195,7 @@ app.get("/play/:cid",async (req,res)=>{
       else//if not live
         res.render("message.ejs",{
           data:{
-            heading:"❌ Challenge is not started!",
+            heading:"❌ Challenge is not live!",
             description:"The challenge you're trying to access hasn't started yet. Keep an eye on this space and sharpen your CSS skills in the meantime. Get ready to join the battle once it goes live!"
           }
         });
@@ -175,8 +234,12 @@ app.get('/adminpanel/problems',async (req, res) => {
   catch(err){
     res.render("message.ejs",{
       data:{
-        heading:"❌ Something went wrong!",
-        description:"Facing error"
+        heading:"❌ Cannot get problems!",
+        description:err.detail,
+        button:{
+          link: "/adminpanel", 
+          text: "Admin Panel"
+        }
       }
     });
   }
@@ -192,15 +255,18 @@ app.get('/adminpanel/challenges',async (req, res) => {
   catch(err){
     res.render("message.ejs",{
       data:{
-        heading:"❌ Something went wrong!",
-        description:err.detail
+        heading:"❌ Cannot get challenges!",
+        description:err.detail,
+        button:{
+          link: "/adminpanel", 
+          text: "Admin Panel"
+        }
       }
     });
   }
 });
 
 app.get('/adminpanel/create-challenge',async (req, res) => {
-
   try{
     const respose = await db.query("SELECT id,name FROM problems");
     res.render("adminpanel/create-challenge.ejs",{
@@ -211,6 +277,11 @@ app.get('/adminpanel/create-challenge',async (req, res) => {
     res.render("message.ejs",{
       data:{
         heading:"❌ Cannot fetch problems!",
+        description:err.detail,
+        button:{
+          link: "/adminpanel", 
+          text: "Admin Panel"
+        }
       }
     });
   }
@@ -220,7 +291,7 @@ app.post('/adminpanel/create-challenge',async (req, res) => {
   const data=req.body;
   try{
     await db.query("insert into challenges(name,questionId,starttime,duration) values ($1,$2,$3,$4);",[encodeURI(data.name),data.problem,data.starttime,data.duration]);
-    res.redirect("/adminpanel/all-challenge");
+    res.redirect("/adminpanel/challenges");
   }
   catch(error){
     res.render("message.ejs",{

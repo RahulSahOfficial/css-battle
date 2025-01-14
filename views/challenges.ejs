@@ -21,9 +21,21 @@
             <% }else{%>
             <% data.forEach(function(each){ %>
                 <div class="each-c">
-                    <img src="/asset/<%=(each.live)?each.id+'.png':'hidden.gif';%>" alt="Hidden">
+                    <%
+                        let imgUrl='hidden.gif';
+                        const currDate=new Date();
+                        if(each.starttime <= currDate)
+                            imgUrl=each.questionid+'.png';
+                    %>
+                    <img src="/asset/problems/<%=imgUrl;%>" alt="Hidden">
                     <h3><%=each.name%></h3>
-                    <a href="/play/<%=each.id%>"><button>Start</button></a>
+                    <p>Start Time : <%=each.starttimeformat%></p>
+                    <p>Duration : <%=each.duration%> minutes</p>
+                    <% if(imgUrl!='hidden.gif'){ %>
+                        <a href="/play/<%=each.name%>"><button>Start</button></a>
+                    <% }else{ %>
+                    <a href="#"><button disabled>Not Started Yet!</button></a>
+                    <% } %>
                 </div>
             <% });} %>
         </div>
