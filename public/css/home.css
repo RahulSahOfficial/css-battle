@@ -1,0 +1,72 @@
+main{
+    display: flex;
+    flex-direction: column;
+    gap: 5rem;
+}
+.hero-area{
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+.hero-area h1{
+    font-size: 5rem;
+    margin-bottom: 1rem;
+}
+.hero-area p{
+    font-size: 1.5rem;
+    margin-left: 2rem;
+    color: #ffeb3b;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+.hero-area img{
+    animation: neon 800ms ease infinite alternate;
+}
+.cta-area{
+    background: #323232;
+    padding: 5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+.cta-area button{
+    background: #FFEB3B;
+    border: none;
+    width: 15rem;
+    padding: 1rem 0rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+    color: black;
+}
+.rules-area{
+    padding: 2rem;
+}
+.rules-area h2{
+    font-size: 1.6rem;
+    margin-bottom: 1rem;
+    color: #ffeb3b;
+}
+.rules-area ol{
+    margin-left: 2rem;
+    font-family: "Open Sans", system-ui;
+    font-size: 1.1rem;
+}
+.rules-area ol li{
+    margin-bottom: 0.5rem;
+}
+@keyframes neon {
+    from {
+        filter: drop-shadow(0 0 8px #fff)
+                drop-shadow(0 0 16px #FFEB3B)
+                drop-shadow(0 0 24px #FFEB3B);
+      }
+      to {
+        filter: drop-shadow(0 0 6px #fff)
+                drop-shadow(0 0 12px #FFEB3B)
+                drop-shadow(0 0 18px #FFEB3B);
+      }
+  }
+  

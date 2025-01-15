@@ -27,3 +27,18 @@ create table challenges(
 );
 insert into challenges(name,questionId,starttime,duration)
 values ('round1',1,'2025-01-19 08:00:25-07','20');
+
+
+
+create table css_submission(
+	id serial primary key,
+	cid varchar(200) references challenges(name),
+	user_email varchar(200) not null,
+	user_name varchar(200) not null,
+	match_percentage numeric(5,2) not null,
+	code text not null,
+	submission_time timestamp default now()
+);
+
+insert into css_submission(cid,user_email,user_name,match_percentage,code) 
+values('asfsasff','rahulsah@abc.com','rahul sah','99.89','asklsa');

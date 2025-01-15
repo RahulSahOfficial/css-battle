@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/table.css">
+    <link rel="stylesheet" href="/css/adminpanel/adminpanel.css">
+    <link rel="stylesheet" href="/css/adminpanel/problems.css">
+    <title>Submission | AdminPanel</title>
+</head>
+<body>
+    <main>
+        <h1>Submission</h1>
+
+        <h2><%= data && data.name</h2>
+        <% if(data.records.length==0){ %>
+            <p class="error">🚫 No Submission Found!</p>
+        <% }else{%>
+            <table class="table table-bordered table-striped table-striped">
+                <thead >
+                    <th>Sl</th>
+                    <th>Challenge Name</th>
+                    <th>Problem Name</th>
+                    <th>Problem Preview</th>
+                    <th>StartTime</th>
+                    <th>Duration</th>
+                </thead>
+                <% data.forEach(function(each,idx){ %>
+                    <tr>
+                        <td><%= idx+1 %></td>
+                        <td><%= decodeURI(each.name) %></td>
+                        <td><%= each.problemname %></td>
+                        <td>
+                            <img src="../asset/problems/<%=each.problemid%>.png" alt=<%=each.problemName %>>
+                        </td>
+                        <td><%= each.starttime %></td>
+                        <td><%= each.duration %></td>
+                    </tr>
+                    </div>
+                <% });%>
+            </table>
+        <% } %>
+    </main>
+</body>
+</html>

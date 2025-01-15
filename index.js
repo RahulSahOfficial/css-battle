@@ -3,22 +3,12 @@ import env from "dotenv";
 import pg from "pg";
 import ejs, { render } from "ejs";
 import bodyParser from "body-parser";
-import session  from "express-session";
+import axios from "axios";
+import cookieParser from "cookie-parser";
 
 env.config();
 const app = express();
 const port = process.env.PORT||3000;
-
-// Login 
-app.use(session({
-  secret: process.env.SESSION_SECRET || "sdnasdk568976AT", 
-  resave: false,
-  saveUninitialized: true,
-  cookie: {
-    secure: false, 
-    maxAge: 1000 * 60 * 60 * 24 * 7 
-  }
-}));
 
 // DB Connection 
 const db = new pg.Client({
@@ -33,10 +23,10 @@ db.connect();
 // Middlewares 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
+app.use(express.json());
 app.set("view-engine","ejs");
+app.use(cookieParser());
 
-
-app.use(bodyParser.urlencoded({extended:true}));
 
 
 // Home render 
@@ -48,47 +38,43 @@ app.get("/",(req,res)=>{
 app.get("/login",(req,res)=>{
   res.render("login.ejs",{
     formData:{
-      email:"205123080@nitt.edu",
-      password:"johndoe"
+      email:"",
+      password:""
     }
   });
 })
 
 // Login Post
 app.post("/login",async (req,res)=>{
-  const user = req.body; 
-  if(user.email && user.password){
-    try{
-      const respose = await db.query("SELECT id,name FROM users WHERE email=$1 AND password=$2",[user.email,user.password]);
-      if(respose.rows.length==1){
-        req.session.user = respose.rows[0];
-        res.redirect("/challenges");
-      }
-      else{
-        res.render("login.ejs",{
-          formData:req.body,
-          message:"ID or password is incorrect!"
-        });
-      }
+  const user = req.body;
+  try{
+    const response=await axios.post("https://quiz-backend.infotrek24.tech/api/users/login",{
+      email:user.email,
+      password:user.password
+    })
+    const responseData=response.data;
+    const userData={
+      name:responseData.data.name,
+      email:responseData.data.email,
+      token:responseData.token
     }
-    catch(err){
-      res.render("login.ejs",{
-        formData:req.body,
-        message:"Something Went Wrong!"
-      });
-    }
+    res.cookie("user", JSON.stringify(userData), {
+      httpOnly: true,
+      secure: true,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+    res.redirect("/challenges");
   }
-  else{
+  catch(err){
     res.render("login.ejs",{
       formData:req.body,
-      message:"ID or password is filled properly!"
+      message:"ID or password is incorrect!"
     });
   }
 })
 
 function isLoggedIn(req, res, next) {
-  if (req.session.user) {
-    // console.log(req.session.user)
+  if (req.cookies.user) {
     next();
   } else {
     res.redirect("/login");
@@ -97,28 +83,13 @@ function isLoggedIn(req, res, next) {
 
 // Logout Get  
 app.get('/logout', (req, res) => {
-  req.session.destroy();
+  res.clearCookie('user');
   res.redirect("/login");
 });
 
 
 // Challenges Get 
-// app.get("/challenges",async (req,res)=>{
-//   try{
-//     const respose = await db.query("SELECT id,name,live FROM challenge WHERE show=true");
-//     res.render("challenges.ejs",{
-//       data:respose.rows
-//     });
-//   }
-//   catch(err){
-//     res.render("challenges.ejs",{
-//       data:[]
-//     });
-//   }
-  
-// })
-
-app.get("/challenges",async (req,res)=>{
+app.get("/challenges",isLoggedIn,async (req,res)=>{
   try{
     const respose = await db.query("select to_char(starttime,'DD MON YY HH:MI:SS AM') starttimeformat,challenges.name,questionid,starttime,duration,(starttime + duration * interval '1 minute') endtime from challenges inner join problems on problems.id=challenges.questionId WHERE starttime + duration * interval '1 minute' > NOW();");
     res.render("challenges.ejs",{
@@ -134,48 +105,7 @@ app.get("/challenges",async (req,res)=>{
 })
 
 // Challenges Specific Get
-// app.get("/play/:cid",async (req,res)=>{
-//   const challengeId=req.params.cid;
-//   try{
-//     const respose = await db.query("SELECT * FROM challenge WHERE id=$1",[challengeId]);
-//     if(respose.rows.length==1){
-//       const challenge=respose.rows[0];
-//       if(challenge.live){
-//         const data={
-//           challengeId:challenge.id,
-//           name:challenge.name,
-//           colors:challenge.colors.split(',')
-//         }
-//         res.render("play.ejs",{data});
-//       }
-//       else//if not live
-//         res.render("message.ejs",{
-//           data:{
-//             heading:"❌ Challenge is not started!",
-//             description:"The challenge you're trying to access hasn't started yet. Keep an eye on this space and sharpen your CSS skills in the meantime. Get ready to join the battle once it goes live!"
-//           }
-//         });
-//     }
-//     else//if challege not found
-//       res.render("message.ejs",{
-//         data:{
-//           heading:"❌ Challenge not found!",
-//           description:"The challenge ID you entered does not exist. Please check the challenge ID or explore other challenges."
-//         }
-//       });
-//   }
-//   catch(err){//if something went wrong
-//     res.render("message.ejs",{
-//       data:{
-//         heading:"❌ Challenge not found!",
-//         description:"The challenge ID you entered does not exist. Please check the challenge ID or explore other challenges."
-//       }
-//     });
-//   }
-// })
-
-
-app.get("/play/:cid",async (req,res)=>{
+app.get("/play/:cid",isLoggedIn,async (req,res)=>{
   const challengeId=req.params.cid;
   const currDate=new Date();
   try{
@@ -184,7 +114,7 @@ app.get("/play/:cid",async (req,res)=>{
       const challenge=respose.rows[0];
       if(challenge.starttime<= currDate && currDate <= challenge.endtime){
         const data={
-          challengeId:challenge.id,
+          problemId:challenge.id,
           name:challenge.name,
           endTime:challenge.endtime,
           
@@ -192,13 +122,14 @@ app.get("/play/:cid",async (req,res)=>{
         }
         res.render("play.ejs",{data});
       }
-      else//if not live
+      else{//if not live
         res.render("message.ejs",{
           data:{
-            heading:"❌ Challenge is not live!",
-            description:"The challenge you're trying to access hasn't started yet. Keep an eye on this space and sharpen your CSS skills in the meantime. Get ready to join the battle once it goes live!"
+            heading:"❌ Challenge is not live now!",
+            description:"The challenge you're trying to access hasn't started yet or completed. Keep an eye on this space and sharpen your CSS skills in the meantime. Get ready to join the battle once it goes live!"
           }
         });
+      }
     }
     else//if challege not found
       res.render("message.ejs",{
@@ -215,6 +146,29 @@ app.get("/play/:cid",async (req,res)=>{
         description:"The challenge ID you entered does not exist. Please check the challenge ID or explore other challenges."
       }
     });
+  }
+})
+
+app.post("/play/:cid",isLoggedIn,async (req,res)=>{
+  const cid=req.params.cid;
+  const user=JSON.parse(req.cookies.user);
+  
+  try{
+    const timeLeft=await db.query("select (starttime+(duration * interval '1 minute') + interval '2 minute')>=NOW() possible from challenges where name=$1;",[cid]);
+    if(timeLeft.rows[0].possible){
+      try{
+        await db.query("insert into css_submission(cid,user_email,user_name,match_percentage,code) values($1,$2,$3,$4,$5) RETURNING id;",[cid,user.email,user.name,req.body.match,req.body.code]);
+        res.sendStatus(202);
+      }
+      catch(err){
+        res.sendStatus(422);
+      }
+    }
+    else
+      res.redirect(req.get('Referer'));
+  } 
+  catch(err){
+    console.log(err);
   }
 })
 

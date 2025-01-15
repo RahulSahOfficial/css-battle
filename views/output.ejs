@@ -4,13 +4,19 @@
         <div class="slider" id="slider"><span id="slider-span">256</span></div>
         <iframe frameborder="0" id="output-frame">
         </iframe>
-        <img src="/asset/problems//<%= data.challengeId %>.png" class="target" id="output-target" alt="TargetOutput">
+        <img src="/asset/problems//<%= data.problemId %>.png" class="target" id="output-target" alt="TargetOutput">
     </div>
     <div class="compare-box">
         <label for="compare">Click to Compare</label>
         <input type="checkbox" id="compare">
     </div>
-    <button id="submit-btn" > Submit</button>
+    <button id="submit-btn" >
+        <i class="fa-solid fa-circle-check"></i>
+        <i class="fa-solid fa-spinner fa-spin"></i>
+        <span>Submit</span>
+    </button>
+    <div id="msg-box" class="">
+    </div>
 </div>
 
 <script src="/js/output.js" defer></script>
