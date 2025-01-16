@@ -25,14 +25,16 @@
                     <th>Sl</th>
                     <th>Problem Name</th>
                     <th>Problem Preview</th>
+                    <th>Colors</th>
                 </thead>
                 <% data.forEach(function(each,idx){ %>
                     <tr>
                         <td><%= idx+1 %></td>
                         <td><%=each.name %></td>
                         <td>
-                            <img src="/asset/problems/<%=each.id%>.png" alt=<%=each.name%>>
+                            <img src="/asset/problems/<%=each.image%>" alt=<%=each.name%>>
                         </td>
+                        <td><%= each.colors %></td>
                     </div>
                 <% })%>
             </table>

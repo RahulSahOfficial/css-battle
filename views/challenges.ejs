@@ -25,10 +25,10 @@
                         let imgUrl='hidden.gif';
                         const currDate=new Date();
                         if(each.starttime <= currDate)
-                            imgUrl=each.questionid+'.png';
+                            imgUrl=each.image;
                     %>
                     <img src="/asset/problems/<%=imgUrl;%>" alt="Hidden">
-                    <h3><%=each.name%></h3>
+                    <h3><%= decodeURI(each.name)%></h3>
                     <p>Start Time : <%=each.starttimeformat%></p>
                     <p>Duration : <%=each.duration%> minutes</p>
                     <% if(imgUrl!='hidden.gif'){ %>

@@ -1,14 +1,28 @@
 import express from "express";
 import env from "dotenv";
+import path from "path";
 import pg from "pg";
 import ejs, { render } from "ejs";
 import bodyParser from "body-parser";
 import axios from "axios";
 import cookieParser from "cookie-parser";
+import multer from "multer";
 
 env.config();
 const app = express();
 const port = process.env.PORT||3000;
+
+console.log(new Date());
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'public/asset/problems/')
+  },
+  filename: function (req, file, cb) {
+    cb(null,`${Date.now()}-${file.originalname}`)
+  }
+})
+
+const upload = multer({ storage: storage })
 
 // DB Connection 
 const db = new pg.Client({
@@ -91,7 +105,7 @@ app.get('/logout', (req, res) => {
 // Challenges Get 
 app.get("/challenges",isLoggedIn,async (req,res)=>{
   try{
-    const respose = await db.query("select to_char(starttime,'DD MON YY HH:MI:SS AM') starttimeformat,challenges.name,questionid,starttime,duration,(starttime + duration * interval '1 minute') endtime from challenges inner join problems on problems.id=challenges.questionId WHERE starttime + duration * interval '1 minute' > NOW();");
+    const respose = await db.query("select to_char(starttime,'DD MON YY HH:MI:SS AM') starttimeformat,challenges.name,problems.image,questionid,starttime,duration,(starttime + duration * interval '1 minute') endtime from challenges inner join problems on problems.id=challenges.questionId WHERE starttime + duration * interval '1 minute' > NOW();");
     res.render("challenges.ejs",{
       data:respose.rows
     });
@@ -106,10 +120,10 @@ app.get("/challenges",isLoggedIn,async (req,res)=>{
 
 // Challenges Specific Get
 app.get("/play/:cid",isLoggedIn,async (req,res)=>{
-  const challengeId=req.params.cid;
+  const challengeId=encodeURI(req.params.cid);
   const currDate=new Date();
   try{
-    const respose = await db.query("select challenges.name name,problems.id id,problems.colors,starttime,duration,(starttime + duration * interval '1 minute') endtime from challenges inner join problems on challenges.questionid = problems.id WHERE challenges.name=$1;",[challengeId]);
+    const respose = await db.query("select challenges.name name,problems.id id,problems.image image,problems.colors,starttime,duration,(starttime + duration * interval '1 minute') endtime from challenges inner join problems on challenges.questionid = problems.id WHERE challenges.name=$1;",[challengeId]);
     if(respose.rows.length==1){
       const challenge=respose.rows[0];
       if(challenge.starttime<= currDate && currDate <= challenge.endtime){
@@ -117,7 +131,7 @@ app.get("/play/:cid",isLoggedIn,async (req,res)=>{
           problemId:challenge.id,
           name:challenge.name,
           endTime:challenge.endtime,
-          
+          image:challenge.image,
           colors:challenge.colors.split(',')
         }
         res.render("play.ejs",{data});
@@ -134,7 +148,7 @@ app.get("/play/:cid",isLoggedIn,async (req,res)=>{
     else//if challege not found
       res.render("message.ejs",{
         data:{
-          heading:"❌ Challenge not found!",
+          heading:"❌ Challenge not found!!",
           description:"The challenge ID you entered does not exist. Please check the challenge ID or explore other challenges."
         }
       });
@@ -150,7 +164,7 @@ app.get("/play/:cid",isLoggedIn,async (req,res)=>{
 })
 
 app.post("/play/:cid",isLoggedIn,async (req,res)=>{
-  const cid=req.params.cid;
+  const cid=encodeURI(req.params.cid);
   const user=JSON.parse(req.cookies.user);
   
   try{
@@ -180,7 +194,7 @@ app.get('/adminpanel', (req, res) => {
 
 app.get('/adminpanel/problems',async (req, res) => {
   try{
-    const respose = await db.query("SELECT id,name FROM problems");
+    const respose = await db.query("SELECT id,name,colors,image FROM problems");
     res.render("adminpanel/problems.ejs",{
       data:respose.rows
     });
@@ -201,7 +215,7 @@ app.get('/adminpanel/problems',async (req, res) => {
 
 app.get('/adminpanel/challenges',async (req, res) => {
   try{
-    const respose = await db.query("select c.name,p.id problemId,p.name problemName,starttime,duration from challenges c inner join problems p on c.questionid=p.id;");
+    const respose = await db.query("select c.name,p.id problemId,p.name problemName,starttime,duration,p.image from challenges c inner join problems p on c.questionid=p.id;");
     res.render("adminpanel/challenges.ejs",{
       data:respose.rows
     });
@@ -219,10 +233,33 @@ app.get('/adminpanel/challenges',async (req, res) => {
     });
   }
 });
-
+app.get('/adminpanel/submission/:cid',async (req, res) => {
+  const cid=encodeURI(req.params.cid);
+  try{
+    const respose = await db.query("select *,to_char(submission_time,'DD MON YY HH:MI:SS AM') format_submission_time from css_submission where cid=$1 order by match_percentage desc,submission_time asc",[cid]);
+    res.render("adminpanel/submission.ejs",{
+      data:{
+        name:decodeURI(cid),
+        records:respose.rows
+      }
+    });
+  }
+  catch(err){
+    res.render("message.ejs",{
+      data:{
+        heading:"❌ Cannot get Submissions!",
+        description:err.detail,
+        button:{
+          link: "/adminpanel", 
+          text: "Admin Panel"
+        }
+      }
+    });
+  }
+});
 app.get('/adminpanel/create-challenge',async (req, res) => {
   try{
-    const respose = await db.query("SELECT id,name FROM problems");
+    const respose = await db.query("SELECT id,name,image FROM problems");
     res.render("adminpanel/create-challenge.ejs",{
       data:respose.rows
     });
@@ -260,6 +297,32 @@ app.post('/adminpanel/create-challenge',async (req, res) => {
     });
   }
 });
+
+app.get('/adminpanel/create-problem',upload.single("image"),async (req, res) => {
+  res.render("adminpanel/create-problem.ejs");
+});
+
+app.post('/adminpanel/create-problem',upload.single('image'),async (req, res) => {
+  const data=req.body;
+  try{
+    const filename = req.file;
+    await db.query("insert into problems(name,colors,image) values ($1,$2,$3);",[data.name,data.colors,filename.filename]);
+    res.redirect("/adminpanel/problems");
+  }
+  catch(error){
+    res.render("message.ejs",{
+      data:{
+        heading:"❌ Something went wrong!",
+        description:error.detail,
+        button:{
+          link: "/adminpanel/create-problem", 
+          text: "Try Again"
+        }
+      }
+    });
+  }
+});
+
 
 // App Listen 
 app.listen(port, () => {

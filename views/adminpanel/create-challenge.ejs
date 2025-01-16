@@ -10,7 +10,6 @@
 
     <link rel="stylesheet" href="/css/reset.css">
     <link rel="stylesheet" href="/css/adminpanel/adminpanel.css">
-    <!-- <link rel="stylesheet" href="/css/adminpanel/problems.css"> -->
     <title>Create Challenge | AdminPanel</title>
 </head>
 <body>
@@ -25,7 +24,7 @@
                     <% }) %>
                 </select>
                 
-                <img src="../asset/problems/<%= (data.length)?data[0].id+'.png':'hidden.gif' %>" id="question-image" alt="Problem Preview">
+                <!-- <img src="../asset/problems/<%= (data.length)?data[0].image:'hidden.gif' %>" id="question-image" alt="Problem Preview"> -->
             </div>
             
             <div class="each-input">
@@ -43,6 +42,6 @@
             <button type="submit">Submit</button>
         </form>
     </main>
-    <script src="../js/create-challenge.js"></script>
+    <!-- <script src="../js/create-challenge.js"></script> -->
 </body>
 </html>

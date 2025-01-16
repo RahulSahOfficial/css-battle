@@ -28,6 +28,7 @@
                     <th>Problem Preview</th>
                     <th>StartTime</th>
                     <th>Duration</th>
+                    <th>Submissions</th>
                 </thead>
                 <% data.forEach(function(each,idx){ %>
                     <tr>
@@ -35,10 +36,11 @@
                         <td><%= decodeURI(each.name) %></td>
                         <td><%= each.problemname %></td>
                         <td>
-                            <img src="../asset/problems/<%=each.problemid%>.png" alt=<%=each.problemName %>>
+                            <img src="../asset/problems/<%=each.image%>" alt=<%=each.problemName %>>
                         </td>
                         <td><%= each.starttime %></td>
                         <td><%= each.duration %></td>
+                        <td><a href="submission/<%= each.name %>"><button>Submission</button></a></td>
                     </tr>
                     </div>
                 <% });%>

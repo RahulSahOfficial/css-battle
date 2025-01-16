@@ -8,6 +8,17 @@ h1{
     font-size: 3rem;
     margin-bottom: 2rem;
 }
+h2{
+    font-size: 1.6rem;
+    margin-bottom: 1.5rem;
+    color: #2196f3;
+    text-transform: uppercase;
+}
+.all-buttons{
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
 button{
     width: 20rem;
     padding: 0.5rem;
@@ -16,6 +27,9 @@ button{
     text-transform: uppercase;
     letter-spacing: 2px;
     cursor: pointer;
+}
+table button{
+    width: 8rem;
 }
 form{
     max-width: 30rem;

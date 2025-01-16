@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/adminpanel/adminpanel.css">
+    <title>Create Problem | AdminPanel</title>
+</head>
+<body>
+    <main>
+        <h1>Create Challenge</h1>
+        <form action="/adminpanel/create-problem" method="post" enctype="multipart/form-data">
+            <div class="each-input">
+                <label for="name">Enter Problem Name</label>
+                <input type="text" name="name" id="name" required>
+            </div>
+            <div class="each-input">
+                <label for="image">Select Image</label>
+                <input type="file" name="image" id="image" required>
+            </div>
+            <div class="each-input">
+                <label for="colors">Enter Colors</label>
+                <input type="text" name="colors" id="colors" required>
+            </div>
+            <button type="submit">Submit</button>
+        </form>
+    </main>
+</body>
+</html>
