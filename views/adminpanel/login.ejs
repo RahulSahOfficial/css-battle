@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/login.css">
+    <title>Admin Login | CSS BattleGround</title>
+</head>
+<body>
+    <main>
+        <div>
+            <h1>Admin Login to CSS BattleGround</h1>
+            <% if(locals.message){ %>
+                <p class="error"><%=message%></p>
+            <% } %>
+            <form action="/adminpanel/login" method="post">
+                <div class="each-input">
+                    <label for="email">Enter your email</label>
+                    <input type="email" name="email" id="email" value="<%=(locals.formData)?formData.email:''%>" required>
+                </div>
+                <div class="each-input">
+                    <label for="password">Enter your password</label>
+                    <input type="password" name="password" id="password" value="<%=(locals.formData)?formData.password:''%>" required>
+                </div>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+    </main>
+    <footer>
+
+    </footer>
+</body>
+</html>

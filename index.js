@@ -188,11 +188,63 @@ app.post("/play/:cid",isLoggedIn,async (req,res)=>{
 
 
 //AdminPanel
-app.get('/adminpanel', (req, res) => {
+app.get('/adminpanel', isAdminLoggedIn,(req, res) => {
   res.render("adminpanel/home.ejs");
 });
 
-app.get('/adminpanel/problems',async (req, res) => {
+
+
+// Login Get 
+app.get("/adminpanel/login",(req,res)=>{
+  res.render("adminpanel/login.ejs",{
+    formData:{
+      email:"",
+      password:""
+    }
+  });
+})
+
+// Login Post
+app.post("/adminpanel/login",async (req,res)=>{
+  const user = req.body;
+  if(user.email==process.env.ADMIN_EMAIL && user.password==process.env.ADMIN_PASSWORD){
+    res.cookie("admin", JSON.stringify(user), {
+      httpOnly: true,
+      secure: true,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+    res.redirect("/adminpanel");
+  }
+  else{
+    res.render("adminpanel/login.ejs",{
+      formData:req.body,
+      message:"ID or password is incorrect!"
+    });
+  }
+})
+
+function isAdminLoggedIn(req, res, next) {
+  if (req.cookies.admin) {
+    const admin=JSON.parse(req.cookies.admin);
+    if(admin.email==process.env.ADMIN_EMAIL && admin.password==process.env.ADMIN_PASSWORD)
+      next()
+    else
+      res.redirect("/adminpanel");
+  }
+  else
+    res.render("adminpanel/login.ejs");
+}
+
+// Logout Get  
+app.get('/adminpanel/logout', (req, res) => {
+  res.clearCookie('admin');
+  res.redirect("/adminpanel/login");
+});
+
+
+
+
+app.get('/adminpanel/problems',isAdminLoggedIn,async (req, res) => {
   try{
     const respose = await db.query("SELECT id,name,colors,image FROM problems");
     res.render("adminpanel/problems.ejs",{
@@ -213,7 +265,7 @@ app.get('/adminpanel/problems',async (req, res) => {
   }
 });
 
-app.get('/adminpanel/challenges',async (req, res) => {
+app.get('/adminpanel/challenges',isAdminLoggedIn,async (req, res) => {
   try{
     const respose = await db.query("select c.name,p.id problemId,p.name problemName,starttime,duration,p.image from challenges c inner join problems p on c.questionid=p.id;");
     res.render("adminpanel/challenges.ejs",{
@@ -233,7 +285,7 @@ app.get('/adminpanel/challenges',async (req, res) => {
     });
   }
 });
-app.get('/adminpanel/submission/:cid',async (req, res) => {
+app.get('/adminpanel/submission/:cid',isAdminLoggedIn,async (req, res) => {
   const cid=encodeURI(req.params.cid);
   try{
     const respose = await db.query("select *,to_char(submission_time,'DD MON YY HH:MI:SS AM') format_submission_time from css_submission where cid=$1 order by match_percentage desc,submission_time asc",[cid]);
@@ -257,7 +309,7 @@ app.get('/adminpanel/submission/:cid',async (req, res) => {
     });
   }
 });
-app.get('/adminpanel/create-challenge',async (req, res) => {
+app.get('/adminpanel/create-challenge',isAdminLoggedIn,async (req, res) => {
   try{
     const respose = await db.query("SELECT id,name,image FROM problems");
     res.render("adminpanel/create-challenge.ejs",{
@@ -278,7 +330,7 @@ app.get('/adminpanel/create-challenge',async (req, res) => {
   }
 });
 
-app.post('/adminpanel/create-challenge',async (req, res) => {
+app.post('/adminpanel/create-challenge',isAdminLoggedIn,async (req, res) => {
   const data=req.body;
   try{
     await db.query("insert into challenges(name,questionId,starttime,duration) values ($1,$2,$3,$4);",[encodeURI(data.name),data.problem,data.starttime,data.duration]);
@@ -298,11 +350,11 @@ app.post('/adminpanel/create-challenge',async (req, res) => {
   }
 });
 
-app.get('/adminpanel/create-problem',upload.single("image"),async (req, res) => {
+app.get('/adminpanel/create-problem',isAdminLoggedIn,async (req, res) => {
   res.render("adminpanel/create-problem.ejs");
 });
 
-app.post('/adminpanel/create-problem',upload.single('image'),async (req, res) => {
+app.post('/adminpanel/create-problem',isAdminLoggedIn,upload.single('image'),async (req, res) => {
   const data=req.body;
   try{
     const filename = req.file;
